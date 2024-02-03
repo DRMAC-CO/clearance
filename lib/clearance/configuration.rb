@@ -82,6 +82,18 @@ module Clearance
     # @return [String]
     attr_accessor :url_after_denied_access_when_signed_out
 
+    # The flash hash returned when successfully signed in.
+    # Defaults to `nil` so no flash is shown.
+    # Example: sign_in_success_flash = {success: "You have signed in!"}
+    # @return [Hash]
+    attr_accessor :sign_in_success_flash
+
+    # The flash hash returned when successfully logged out.
+    # Defaults to `nil` so no flash is shown.
+    # Example: sign_out_success_flash = {notice: "You have been logged out."}
+    # @return [Hash]
+    attr_accessor :sign_out_success_flash
+
     # Controls whether Clearance will rotate the CSRF token on sign in.
     # Defaults to `nil` which generates a warning. Will default to true in
     # Clearance 2.0.
@@ -156,6 +168,8 @@ module Clearance
       @redirect_url = '/'
       @url_after_destroy = nil
       @url_after_denied_access_when_signed_out = nil
+      @sign_in_success_flash = nil
+      @sign_out_success_flash = nil
       @rotate_csrf_on_sign_in = true
       @routes = true
       @secure_cookie = false

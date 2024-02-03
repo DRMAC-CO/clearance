@@ -137,6 +137,34 @@ describe Clearance::Configuration do
     end
   end
 
+  context "when no sign_in_success_flash value specified" do
+    it "returns nil as the default" do
+      expect(Clearance::Configuration.new.sign_in_success_flash).to be_nil
+    end
+  end
+
+  context "when sign_in_success_flash value is specified" do
+    it "returns the sign_in_success_flash value" do
+      Clearance.configure { |config| config.sign_in_success_flash = {notice: "hello"} }
+
+      expect(Clearance.configuration.sign_in_success_flash).to eq({notice: "hello"})
+    end
+  end
+
+  context "when no sign_out_success_flash value specified" do
+    it "returns nil as the default" do
+      expect(Clearance::Configuration.new.sign_out_success_flash).to be_nil
+    end
+  end
+
+  context "when sign_out_success_flash value is specified" do
+    it "returns the sign_out_success_flash value" do
+      Clearance.configure { |config| config.sign_out_success_flash = {notice: "goodbye"} }
+
+      expect(Clearance.configuration.sign_out_success_flash).to eq({notice: "goodbye"})
+    end
+  end
+
   context "when specifying sign in guards" do
     it "returns the stack with added guards" do
       DummyGuard = Class.new

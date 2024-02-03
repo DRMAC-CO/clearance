@@ -7,7 +7,7 @@ class Clearance::SessionsController < Clearance::BaseController
 
     sign_in(@user) do |status|
       if status.success?
-        redirect_back_or url_after_create
+        redirect_back_or url_after_create, flash: sign_in_success_flash
       else
         flash.now.alert = status.failure_message
         render template: "sessions/new", status: :unauthorized
@@ -17,7 +17,7 @@ class Clearance::SessionsController < Clearance::BaseController
 
   def destroy
     sign_out
-    redirect_to url_after_destroy, status: :see_other
+    redirect_to url_after_destroy, status: :see_other, flash: sign_out_success_flash
   end
 
   def new
@@ -30,6 +30,14 @@ class Clearance::SessionsController < Clearance::BaseController
     if signed_in?
       redirect_to url_for_signed_in_users
     end
+  end
+
+  def sign_in_success_flash
+    Clearance.configuration.sign_in_success_flash
+  end
+
+  def sign_out_success_flash
+    Clearance.configuration.sign_out_success_flash
   end
 
   def url_after_create

@@ -56,6 +56,8 @@ describe Clearance::SessionsController do
 
       it { should redirect_to_url_after_create }
 
+      it { should_not set_flash }
+
       it "sets the user in the clearance session" do
         expect(request.env[:clearance].current_user).to eq @user
       end
@@ -115,6 +117,21 @@ describe Clearance::SessionsController do
         should redirect_to(return_url)
       end
     end
+
+    context "when the sign in success flash is set" do
+      before do
+        @user = create(:user)
+        Clearance.configure { |config| config.sign_in_success_flash = {success: "Welcome!"} }
+      end
+
+      it "includes the flash in the response" do
+        post :create, params: {
+          session: { email: @user.email, password: @user.password },
+        }
+
+        expect(flash[:success]).to eq("Welcome!")
+      end
+    end
   end
 
   describe "on DELETE to #destroy" do
@@ -132,6 +149,7 @@ describe Clearance::SessionsController do
 
       it { should redirect_to_url_after_destroy }
       it { expect(response).to have_http_status(:see_other) }
+      it { should_not set_flash }
 
       context "when the custom redirect URL is set" do
         let(:configured_redirect_url) { "/redirected" }
@@ -162,6 +180,21 @@ describe Clearance::SessionsController do
         let(:configured_redirect_url) { "/redirected" }
 
         it { should redirect_to(configured_redirect_url) }
+      end
+    end
+
+    context "with a sign out flash set" do
+      before do
+        Clearance.configure { |config| config.sign_out_success_flash = {notice: "Goodbye"} }
+        @user = create(:user)
+        @user.update_attribute :remember_token, "old-token"
+        @request.cookies["remember_token"] = "old-token"
+      end
+
+      it "includes the flash in the response" do
+        delete :destroy
+
+        expect(flash[:notice]).to eq("Goodbye")
       end
     end
   end
